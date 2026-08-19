@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private, browser-based grant tracker for client applications and awards.">
+  <title>Grant Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">Operations workspace</p>
+      <h1>Grant Tracker</h1>
+      <p class="subtitle">Track applications, decisions, awards, and follow-ups in one place.</p>
+    </div>
+    <div class="header-actions">
+      <button class="button button-secondary" id="exportCsv" type="button">Export CSV</button>
+      <button class="button button-primary" id="addGrant" type="button">Add grant</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="kpi-grid" aria-label="Grant summary">
+      <article class="kpi-card"><span>Visible grants</span><strong id="kpiTotal">0</strong></article>
+      <article class="kpi-card"><span>Submitted</span><strong id="kpiSubmitted">0</strong></article>
+      <article class="kpi-card"><span>Successful</span><strong id="kpiSuccessful">0</strong></article>
+      <article class="kpi-card"><span>Amount awarded</span><strong id="kpiAwarded">$0</strong></article>
+    </section>
+
+    <section class="panel" aria-labelledby="filtersTitle">
+      <div class="panel-heading">
+        <div><p class="eyebrow">Find records</p><h2 id="filtersTitle">Filters</h2></div>
+        <button class="text-button" id="clearFilters" type="button">Clear filters</button>
+      </div>
+      <div class="filters">
+        <label class="field field-wide">Search
+          <input id="search" type="search" placeholder="Search grant or client" autocomplete="off">
+        </label>
+        <label class="field">Client
+          <select id="clientFilter"><option value="">All clients</option></select>
+        </label>
+        <label class="field">Year
+          <select id="yearFilter"><option value="">All years</option></select>
+        </label>
+        <label class="field">Submission
+          <select id="submittedFilter"><option value="">All</option><option>Yes</option><option>No</option><option value="Unspecified">Unspecified</option></select>
+        </label>
+        <label class="field">Outcome
+          <select id="outcomeFilter"><option value="">All</option><option>Yes</option><option>No</option><option value="Pending">Pending</option></select>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel table-panel" aria-labelledby="recordsTitle">
+      <div class="panel-heading">
+        <div><p class="eyebrow">Application register</p><h2 id="recordsTitle">Grant records</h2></div>
+        <p id="resultCount" class="result-count" aria-live="polite"></p>
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable grant records table">
+        <table>
+          <thead><tr>
+            <th scope="col"><button class="sort" data-sort="client">Client</button></th>
+            <th scope="col"><button class="sort" data-sort="grantName">Grant</button></th>
+            <th scope="col"><button class="sort" data-sort="year">Year</button></th>
+            <th scope="col">Submitted</th>
+            <th scope="col">Applied</th>
+            <th scope="col">Outcome</th>
+            <th scope="col">Awarded</th>
+            <th scope="col">Response date</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr></thead>
+          <tbody id="grantRows"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty-state" hidden>
+        <h3>No grants match these filters</h3>
+        <p>Clear one or more filters or add a new grant record.</p>
+      </div>
+    </section>
+
+    <section class="panel data-tools" aria-labelledby="dataTitle">
+      <div><p class="eyebrow">Local data</p><h2 id="dataTitle">Backup and restore</h2><p>Your edits are saved only in this browser. Export a backup before changing computers or clearing browser data.</p></div>
+      <div class="tool-actions">
+        <button class="button button-secondary" id="exportJson" type="button">Download backup</button>
+        <label class="button button-secondary file-button">Restore backup<input id="importJson" type="file" accept="application/json,.json"></label>
+        <button class="button button-danger" id="resetData" type="button">Reset workbook data</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="grantDialog" aria-labelledby="dialogTitle">
+    <form id="grantForm" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">Grant record</p><h2 id="dialogTitle">Add grant</h2></div><button class="icon-button" id="closeDialog" type="button" aria-label="Close">×</button></div>
+      <input id="recordId" type="hidden">
+      <div class="form-grid">
+        <label class="field field-full">Client or organization <span aria-hidden="true">*</span><input id="client" list="clientList" required></label>
+        <datalist id="clientList"></datalist>
+        <label class="field field-full">Grant name <span aria-hidden="true">*</span><input id="grantName" required></label>
+        <label class="field">Year<input id="year" type="number" min="2000" max="2100" inputmode="numeric"></label>
+        <label class="field">Potential response date<input id="responseDate" type="text" placeholder="YYYY-MM-DD or a note"></label>
+        <label class="field">Submitted?<select id="submitted"><option value="">Unspecified</option><option>Yes</option><option>No</option></select></label>
+        <label class="field">Successful?<select id="successful"><option value="">Pending</option><option>Yes</option><option>No</option></select></label>
+        <label class="field">Amount applied for<input id="amountApplied" inputmode="decimal" placeholder="e.g., 25000 or N/A"></label>
+        <label class="field">Amount awarded<input id="amountAwarded" inputmode="decimal" placeholder="e.g., 10000"></label>
+        <label class="field">Consulting amount<input id="consultingAmount" inputmode="decimal" placeholder="e.g., 1500"></label>
+        <label class="field field-full">Notes<textarea id="notes" rows="3"></textarea></label>
+      </div>
+      <p class="form-note">Required fields are marked with an asterisk.</p>
+      <div class="dialog-actions"><button class="button button-secondary" id="cancelDialog" type="button">Cancel</button><button class="button button-primary" type="submit">Save grant</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="data/grants.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
