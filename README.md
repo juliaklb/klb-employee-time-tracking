@@ -27,6 +27,23 @@ Use **Download backup** regularly. To move the tracker to another browser or com
 
 Use **Reset workbook data** to discard browser edits and return to the original imported records.
 
+## Deploying on Netlify
+
+### Drag-and-drop deployment
+
+1. Sign in to Netlify and open **Add new project → Deploy manually**.
+2. Drag the unzipped `grant-tracker` folder into the deployment area. You may also upload the Netlify-ready ZIP supplied with this project.
+3. Netlify should publish the site without a build command.
+
+### Deploying from GitHub
+
+1. Upload the **contents** of this folder to the root of your GitHub repository. `index.html` and `netlify.toml` must appear at the repository's top level, not inside another folder or ZIP file.
+2. In Netlify, choose **Add new project → Import an existing project** and select the repository.
+3. Leave the build command blank. The publish directory is already set to `.` in `netlify.toml`.
+4. Deploy the site.
+
+If Netlify shows **Page not found**, confirm that `index.html` is at the published directory's root. If Netlify reports a failed build, clear any build command saved in the Netlify project settings and redeploy.
+
 ## Hosting on GitHub Pages
 
 Upload the contents of this folder to a GitHub repository. In the repository, open **Settings → Pages**, select **Deploy from a branch**, choose the branch and root folder, then save. Keep the repository private if the client data is confidential. Note that GitHub Pages sites may have visibility implications depending on your plan and repository settings.
@@ -37,3 +54,4 @@ Upload the contents of this folder to a GitHub repository. In the repository, op
 - `styles.css` – responsive, accessible styling
 - `app.js` – filtering, editing, storage, import, and export features
 - `data/grants.js` – imported workbook records
+- `netlify.toml` – Netlify publish and security-header configuration
